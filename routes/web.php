@@ -1,17 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Services\FarmaTraceService;
+use App\Http\Controllers\LoteController;
 
-// Ruta principal (Dashboard)
+// Ruta principal
 Route::get('/', function () {
-    return "Bienvenido a FarmaTrace - Sistema Predictivo";
+    return response()->json(['sistema' => 'FarmaTrace v1.0', 'estado' => 'Activo']);
 });
 
-// Ruta con parámetros: Consultar estado de un lote (Ej: /lote/15)
-Route::get('/lote/{dias_restantes}', function ($dias_restantes) {
-    $service = new FarmaTraceService();
-    $estado = $service->evaluarEstadoCaducidad((int) $dias_restantes);
-
-    return "El estado del lote con {$dias_restantes} días restantes es: <strong>{$estado}</strong>";
-})->whereNumber('dias_restantes'); // Expresión regular: solo acepta números
+// Ruta de evaluación conectada al controlador y protegida por regex
+Route::get('/api/lotes/evaluar/{dias}', [LoteController::class, 'evaluarCaducidad'])
+    ->whereNumber('dias') // QA: Protegemos que no inyecten letras o símbolos
+    ->name('api.lotes.evaluar');
