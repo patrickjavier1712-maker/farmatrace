@@ -33,4 +33,16 @@ class FarmaTraceServiceTest extends TestCase
         $this->assertEquals(15.0, $this->service->calcularPromedioRotacionDiaria([10, 15, 20]));
         $this->assertEquals(0.0, $this->service->calcularPromedioRotacionDiaria([]));
     }
+
+    public function test_evaluar_criticidad_stock_con_diferentes_rangos(): void
+    {
+        $this->assertEquals("Crítico", $this->service->evaluarCriticidadStock(100, 15));
+        $this->assertEquals("Bajo", $this->service->evaluarCriticidadStock(100, 40));
+        $this->assertEquals("Normal", $this->service->evaluarCriticidadStock(100, 70));
+        $this->assertEquals("Óptimo", $this->service->evaluarCriticidadStock(100, 90));
+        
+        // Pruebas de error (valores fuera de rango)
+        $this->assertEquals("Error", $this->service->evaluarCriticidadStock(100, 120));
+        $this->assertEquals("Error", $this->service->evaluarCriticidadStock(100, -5));
+    }
 }
