@@ -4,7 +4,8 @@ namespace Tests\Unit;
 
 use App\Models\Lote;
 use App\Services\LoteService;
-use PHPUnit\Framework\TestCase;
+use Carbon\Carbon;
+use Tests\TestCase;
 
 class LoteServiceTest extends TestCase
 {
@@ -13,6 +14,7 @@ class LoteServiceTest extends TestCase
         // GIVEN
         $lote = new Lote([
             'stock' => 10,
+            'fecha_vencimiento' => Carbon::now()->addMonth(),
         ]);
 
         $service = new LoteService();
@@ -29,6 +31,7 @@ class LoteServiceTest extends TestCase
         // GIVEN
         $lote = new Lote([
             'stock' => 3,
+            'fecha_vencimiento' => Carbon::now()->addMonth(),
         ]);
 
         $service = new LoteService();
@@ -38,5 +41,39 @@ class LoteServiceTest extends TestCase
 
         // THEN
         $this->assertFalse($resultado);
+    }
+
+    public function test_no_puede_vender_lote_vencido(): void
+    {
+        // GIVEN
+        $lote = new Lote([
+            'stock' => 10,
+            'fecha_vencimiento' => Carbon::now()->subDay(),
+        ]);
+
+        $service = new LoteService();
+
+        // WHEN
+        $resultado = $service->puedeVender($lote, 2);
+
+        // THEN
+        $this->assertFalse($resultado);
+    }
+
+    public function test_puede_vender_lote_vigente(): void
+    {
+        // GIVEN
+        $lote = new Lote([
+            'stock' => 10,
+            'fecha_vencimiento' => Carbon::now()->addMonth(),
+        ]);
+
+        $service = new LoteService();
+
+        // WHEN
+        $resultado = $service->puedeVender($lote, 2);
+
+        // THEN
+        $this->assertTrue($resultado);
     }
 }
