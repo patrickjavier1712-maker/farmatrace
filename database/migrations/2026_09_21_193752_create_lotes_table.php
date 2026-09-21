@@ -13,11 +13,20 @@ return new class extends Migration
     {
         Schema::create('lotes', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo_lote')->unique(); // unique() evita que registres el mismo lote dos veces
-            $table->string('nombre_medicamento');
+
+            $table->foreignId('producto_id')
+                ->constrained('productos')
+                ->cascadeOnDelete();
+
+            $table->string('codigo_lote');
+
             $table->integer('stock');
+
             $table->date('fecha_vencimiento');
-            $table->timestamps(); // Crea las columnas created_at y updated_at automáticamente
+
+            $table->decimal('precio_compra', 10, 2);
+
+            $table->timestamps();
         });
     }
 
