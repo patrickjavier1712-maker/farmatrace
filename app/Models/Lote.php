@@ -26,4 +26,9 @@ class Lote extends Model
     {
         return $this->belongsTo(Producto::class);
     }
+
+    public function estaVencido(): bool
+    {
+        return $this->fecha_vencimiento->isPast();
+    }
 }
